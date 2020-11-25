@@ -1,6 +1,6 @@
 # off-target-reads
 
-A workflow aiming to assemble off-target reads from target enrichment alignments, annotate the contigs, exclude putatively contaminant sequences, find putative single or low copy genes recovered in a user-specified number of samples and create alignments from them. Starting point is a \*.sam or \*.bam file of reads from a target enrichment approach mapped to the respective target regions or baits. The workflow comprises comprises steps running in several established OpenSource programs (e.g. [Trinotate](#https://github.com/Trinotate/Trinotate.github.io/wiki) or [samtools] (#https://github.com/samtools/samtools)) and some python scripts to filter their output. This repository contains the python script and the individual steps through the workflow. 
+A workflow aiming to assemble off-target reads from target enrichment alignments, annotate the contigs, exclude putatively contaminant sequences, find putative single or low copy genes recovered in a user-specified number of samples and create alignments from them. Starting point is a \*.sam or \*.bam file of reads from a target enrichment approach mapped to the respective target regions or baits. The workflow comprises steps running in several established OpenSource programs (e.g. [Trinotate](#https://github.com/Trinotate/Trinotate.github.io/wiki) or [samtools] (#https://github.com/samtools/samtools)) and some python scripts to filter their output. This repository contains the python script and the individual steps through the workflow. 
 <br>
 If you use the workflow or any of its parts, please cite the repository as well as Reichelt et al., 2020 (Link will be provided upon publication of the paper).
 
@@ -42,19 +42,19 @@ running some steps on a HPC is strongly advised. See [Workflow](#workflow) for d
 
 The most convenient way to install the entirety of the required packages and software, is using the Conda (Python 3 distribution); either [Anaconda](#https://www.anaconda.com/) or [Miniconda](#https://docs.conda.io/en/latest/miniconda.html).
 
-However, depending on the size of your dataset, some steps (e.g. the assembly) might perform better in a high performace environment.
+However, depending on the size of your dataset, some steps (e.g. the assembly) might perform better in a high performance environment.
 
 
 ## Workflow
 
-The Wokflow consist of 10 individual steps, of some which are optional, depending on the intended use of the data. 
+The Workflow consists of 10 individual steps, some of which are optional depending on the intended use of the data. 
 <br><br>
 
 #### Overview
 
 1) Samtools to extract unmapped sequences<br>
 2) Convert sam to fastq files with Picard<br>
-3) D-novo assembly of off-target reads<br>
+3) De-novo assembly of off-target reads<br>
 4) Blast <br>
 5) Filter BLAST results using **FilterBlastByHitLenght.py**<br>
 6) Annotation using Trinotate<br>
@@ -79,7 +79,7 @@ Here is the code for extracting the two paired end reads from the unmapped.sam f
         java -jar picard.jar SamToFastq I={filename}.unmapped.sam FASTQ={filename}_unmapped.1.fastq SECOND_END_FASTQ={filename}_unmapped.2.fastq
 ```
 <br><br>
-**2) dD-novo assembly of off-target reads**
+**3) De-novo assembly of off-target reads**
 <br><br>
 Use an assembler fitting your data. Example here SPAdes for PE reads:
 <br><br>
@@ -87,7 +87,7 @@ Use an assembler fitting your data. Example here SPAdes for PE reads:
 python /usr/product/bioinfo/SPADES/3.13.2/spades.py -1 [unmapped1].fastq.gz -2 [unmapped2].fastq -k 21,33,55,77 -t 6 --careful --only-assembler -o [outfilename]_spades
 ```
 <br><br>
-**3) Blast**
+**4) Blast**
 <br><br>
 Blast search to identifiy the contigs. Use either BlastX or BlastP and report to BLAST-outfmt6. If you use BlastP, first translate your input sequences using [TransDecoder](#https://github.com/TransDecoder/TransDecoder/wiki). Download the current verison of [uniprot](#https://uniprot.org) as a reference. <br>
 Example:
@@ -108,9 +108,9 @@ blastp -query [samplename]_LongestOrfs.pep -db uniprot_sprot.pep -num_threads [n
 
 ```
 <br><br>
-**4) Filter BLAST results**
+**5) Filter BLAST results**
 <br><br>
-This step is optional. The script **FilterBlastByHitLenght.py** will filter BLAST results and retain only hits with a user specified minimum required length for the hit alignment. This step might remove more spurious results, but its main purpuse is to facilitate a possible bait or primer design from final alignments.
+This step is optional. The script **FilterBlastByHitLenght.py** will filter BLAST results and retain only hits with a user specified minimum required length for the hit alignment. This step might remove more spurious results, but its main purpose is to facilitate a possible bait or primer design from final alignments.
 <br><br>
 ```
 usage: FilterBlastByHitLenght.py [-h] [-m MINLENGTH] [-c COLUMN] Path
@@ -132,12 +132,12 @@ optional arguments:
                         metric. Default: 4 (=standard outfmt6 format)
 ```
 <br><br>
-**5) Annotation using Trinotate**
+**6) Annotation using Trinotate**
 <br><br>
-Build and a Trinotate database for each sample and export it (see [Manual](#https://github.com/Trinotate/Trinotate.github.io/wiki/Loading-generated-results-into-a-Trinotate-SQLite-Database-and-Looking-the-Output-Annotation-Report) if necessary). Use the (filtered) BLAST results.<br>
-**Important** Make sure to include the transcripts in the annotation reports by setting the ``` --incl_trans``` flag.
+Build a Trinotate database for each sample and export it (see [Manual](#https://github.com/Trinotate/Trinotate.github.io/wiki/Loading-generated-results-into-a-Trinotate-SQLite-Database-and-Looking-the-Output-Annotation-Report) if necessary). Use the (filtered) BLAST results.<br>
+**Important**: Make sure to include the transcripts in the annotation reports by setting the ``` --incl_trans``` flag.
 <br><br>
-**6) Annotation results to Fasta files**
+**7) Annotation results to Fasta files**
 <br><br>
 This script will parse all annotation results and produce per gene fasta files containing the transcript-sequences for identified genes found in a user-specified minimum number of samples and with a maximum number of occurrences per sample.
 <br><br>
@@ -171,18 +171,18 @@ optional arguments:
 
 ```
 <br><br>
-**7) Multiple Seuqence Alignment**
+**8) Multiple Seuqence Alignment**
 <br><br>
 Build multiple sequence alignments (MSAs) using the previously generated \*.fasta files as input. If possible choose attempt to align either direction of a given sequence (``` --adjustdirection``` in MAFFT). See this example:
 ```
 mafft --maxiterate 100 --adjustdirection --localpair --thread 5 [genesymbol].fasta > [genesymbol]_mafft.fasta
 ```
 <br><br>
-**8) Check alignments**
+**9) Check alignments**
 <br><br>
-Visually check you alignments. Currently **Annotation2Fasta.py** does not ensure that all transcripts overlap. Hence it is possible, that you have sequences that do not matcht the rest of the alignments, especially if you allow several transcripts per sample. This need not be the case, but should be inspected and edited if neccessary.
+Visually check your alignments. Currently, **Annotation2Fasta.py** does not ensure that all transcripts overlap. Hence, it is possible that you have sequences that do not match the rest of the alignments, especially if you allow several transcripts per sample. This does not need to be the case, but should be inspected and edited if neccessary.
 <br><br>
-**9) Trim alignments**
+**10) Trim alignments**
 <br><br>
 Regardless of any editing, most alignments will have regions of low sample coverage in the beginning and end. **TrimEnds.py** allows you to cut the columns of an alignment start and end until a minimum sample coverage is reached.
 ```
@@ -223,8 +223,8 @@ optional arguments:
 ## Disclaimer
 
 The workflow and scripts are the result of an investigation of off-target reads. They were conceived during the writing of a paper on Target Enrichment in 
-<br><br> *Reichelt et al (2020)* **Target enrichment improves phylogenetic resolution in the genus Zanthoxylum (Rutaceae) and indicates both incomplete lineage sorting and hybridization events**. <br><br>
-They do not represent a fully matured, wrapped, parallelized pipeline, but a basic working concept, that still requies some hands-on work. 
+<br><br> *Reichelt et al (2020)* **Target enrichment improves phylogenetic resolution in the genus *Zanthoxylum* (Rutaceae) and indicates both incomplete lineage sorting and hybridization events**. <br><br>
+They do not represent a fully matured, wrapped, parallelized pipeline, but a basic working concept, that still requires some hands-on work. 
 That said, I do encourage any kind of further development. Please contact me if you are interested in advancing the workflow. 
 
 ## Built With
