@@ -1,6 +1,6 @@
 # off-target-reads
 
-A workflow aiming to assemble off-target reads from target enrichment alignments, annotate the contigs, exclude putatively contaminant sequences, find putative single or low copy genes recovered in a user-specified number of samples and create alignments from them. Starting point is a \*.sam or \*.bam file of reads from a target enrichment approach mapped to the respective target regions or baits. The workflow comprises steps running in several established OpenSource programs (e.g. [Trinotate](#https://github.com/Trinotate/Trinotate.github.io/wiki) or [samtools] (#https://github.com/samtools/samtools)) and some python scripts to filter their output. This repository contains the python script and the individual steps through the workflow. 
+A workflow aiming to assemble off-target reads from target enrichment alignments, annotate the contigs, exclude putatively contaminant sequences, find putative single or low copy genes recovered in a user-specified number of samples and create alignments from them. Starting point is a \*.sam or \*.bam file of reads from a target enrichment approach mapped to the respective target regions or baits. The workflow comprises steps running in several established OpenSource programs (e.g. [Trinotate](#https://github.com/Trinotate/Trinotate.github.io/wiki) or [samtools](#https://github.com/samtools/samtools)) and some python scripts to filter their output. This repository contains the python script and the individual steps through the workflow.
 <br>
 If you use the workflow or any of its parts, please cite the repository as well as Reichelt et al., 2020 (Link will be provided upon publication of the paper).
 
@@ -20,7 +20,7 @@ These instructions will get you a copy of the project up and running on
 your local machine. However depending on the number and size of your input files,
 running some steps on a HPC is strongly advised. See [Workflow](#workflow) for details.
 
-### required Additional Software 
+### required Additional Software
 
   - [samtools](#https://www.htslib.org)
   - [Picard](#https://broadinstitute.github.io/picard/)
@@ -28,7 +28,7 @@ running some steps on a HPC is strongly advised. See [Workflow](#workflow) for d
   - [BLAST+](#https://blast.ncbi.nlm.nih.gov/Blast.cgi?CMD=Web&PAGE_TYPE=BlastDocs&DOC_TYPE=Download)
   - [Trinotate](#https://github.com/Trinotate/Trinotate.github.io/wiki)
   - A multiple sequence alignment program (e.g. [MAFFT](#https://mafft.cbrc.jp/alignment/software/) , [MUSCLE](#https://www.drive5.com/muscle/), etc.)
-    
+
 
 ### Prerequisites
 
@@ -37,7 +37,7 @@ running some steps on a HPC is strongly advised. See [Workflow](#workflow) for d
    - Biopython
    - AMAS
 
-   
+
 ### Installing
 
 The most convenient way to install the entirety of the required packages and software, is using the Conda (Python 3 distribution); either [Anaconda](#https://www.anaconda.com/) or [Miniconda](#https://docs.conda.io/en/latest/miniconda.html).
@@ -47,7 +47,7 @@ However, depending on the size of your dataset, some steps (e.g. the assembly) m
 
 ## Workflow
 
-The Workflow consists of 10 individual steps, some of which are optional depending on the intended use of the data. 
+The Workflow consists of 10 individual steps, some of which are optional depending on the intended use of the data.
 <br><br>
 
 #### Overview
@@ -65,7 +65,7 @@ The Workflow consists of 10 individual steps, some of which are optional dependi
 
 #### Details
 
-**1) Samtools to extract unmapped sequences** 
+**1) Samtools to extract unmapped sequences**
 <br><br>
 Here is an example for paired end reads:
 <br><br>
@@ -73,7 +73,7 @@ Here is an example for paired end reads:
 <br><br>
 **2) Convert \*.sam file to \*.fastq file**
 <br><br>
-Here is the code for extracting the two paired end reads from the unmapped.sam file into individual \*.fastq files using the Picard suite. 
+Here is the code for extracting the two paired end reads from the unmapped.sam file into individual \*.fastq files using the Picard suite.
 <br><br>
 ```
         java -jar picard.jar SamToFastq I={filename}.unmapped.sam FASTQ={filename}_unmapped.1.fastq SECOND_END_FASTQ={filename}_unmapped.2.fastq
@@ -222,10 +222,10 @@ optional arguments:
 
 ## Disclaimer
 
-The workflow and scripts are the result of an investigation of off-target reads. They were conceived during the writing of a paper on Target Enrichment in 
+The workflow and scripts are the result of an investigation of off-target reads. They were conceived during the writing of a paper on Target Enrichment in
 <br><br> *Reichelt et al (2020)* **Target enrichment improves phylogenetic resolution in the genus *Zanthoxylum* (Rutaceae) and indicates both incomplete lineage sorting and hybridization events**. <br><br>
-They do not represent a fully matured, wrapped, parallelized pipeline, but a basic working concept, that still requires some hands-on work. 
-That said, I do encourage any kind of further development. Please contact me if you are interested in advancing the workflow. 
+They do not represent a fully matured, wrapped, parallelized pipeline, but a basic working concept, that still requires some hands-on work.
+That said, I do encourage any kind of further development. Please contact me if you are interested in advancing the workflow.
 
 ## Built With
 
@@ -239,7 +239,7 @@ That said, I do encourage any kind of further development. Please contact me if 
     [ClaudiaPaetzold](#https://github.com/ClaudiaPaetzold)
   - **Billie Thompson** - *Provided README Template* -
     [PurpleBooth](#https://github.com/PurpleBooth)
-  - **Marc Appelhans** - *provided help and feedback conceptualising the workflow* 
+  - **Marc Appelhans** - *provided help and feedback conceptualising the workflow*
 
 
 ## License
@@ -247,4 +247,3 @@ That said, I do encourage any kind of further development. Please contact me if 
 This project is licensed under the [GNU General Public License v3.0](LICENSE.md)
 Creative Commons License - see the [LICENSE.md](LICENSE.md) file for
 details
-
