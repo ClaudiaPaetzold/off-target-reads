@@ -240,6 +240,7 @@ That said, I do encourage any kind of further development. Please contact me if 
   - **Billie Thompson** - *Provided README Template* -
     [PurpleBooth](#https://github.com/PurpleBooth)
   - **Marc Appelhans** - *provided help and feedback conceptualising the workflow*
+  - **Niklas Reichelt**(#https://github.com/NiklasReichelt) - *provided feedback on the repo*
 
 
 ## License
