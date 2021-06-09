@@ -5,6 +5,8 @@ import argparse
 from Bio import AlignIO
 
 
+
+
 def ends4trimming(aln, fraction, gapchar):
 	### helper function; finds the position(s) in the alignment where the alignment will be trimmed
     # aln = handle of parsed AlignIO object
@@ -29,7 +31,7 @@ def ends4trimming(aln, fraction, gapchar):
             elif column.count(gapchar) < frac and next_col.count(gapchar) >= frac:
                 start_gap.append(col)
     
-    # check if last position in alignment exceed coverage requirements -> then it needs to be the last element of startgap
+    # check if last position in alignment exceeds coverage requirements -> then it needs to be the last element of startgap
     last = aln.get_alignment_length() 
     if aln[:,last-1].count(gapchar) < fraction:
         start_gap.append(last-1)
