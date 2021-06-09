@@ -29,15 +29,22 @@ def ends4trimming(aln, fraction, gapchar):
             elif column.count(gapchar) < frac and next_col.count(gapchar) >= frac:
                 start_gap.append(col)
     
+    # check if last position in alignment exceed coverage requirements -> then it needs to be the last element of startgap
+    last = aln.get_alignment_length() 
+    if aln[:,last-1].count(gapchar) < fraction:
+        start_gap.append(last-1)
+    
     return [end_gap[0], start_gap[-1]]
 
 def trim_alignment(aln, outname, fraction, gapchar):
     # aln: handle of AlignIO-pased file
     # outname: file to write to
     # fraction = fraction of species covered at alignment ends - float
+
     pos = ends4trimming(aln, fraction, gapchar)
     trimmed_aln = aln[:, pos[0] + 1 : pos[1] -1]
     AlignIO.write(trimmed_aln, outname, 'fasta')
+
 
 	
 def main():
