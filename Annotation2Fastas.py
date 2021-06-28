@@ -181,7 +181,7 @@ def main():
 	# create countfile
 	countfile = os.path.join(args.PATH, "aliens.csv")
 	with open(countfile, 'a') as out:
-		out.write('{};{};{};{};{};{};{};{};{};{}\n'.format('Spermatophyta',
+		out.write(';{};{};{};{};{};{};{};{};{};{}\n'.format('Spermatophyta',
 				'Embryophyta', 'Fungi', 'Rodentia', 'Bacteria', 'Hominidae',
 				'Amphibia', 'Mollusca', 'Insecta', 'Other'))
 	
