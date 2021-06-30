@@ -16,7 +16,7 @@ def filter_spermatophytes(infile, outfile, countfile):
 
 	aliens = OrderedDict()
 	aliens["Embryophyta"] = 0
-	aliens["Fungi"] = 0 
+	aliens["Fungi"] = 0
 	aliens["Rodentia"] = 0
 	aliens["Bacteria"] = 0
 	aliens["Hominidae"] = 0
@@ -39,24 +39,24 @@ def filter_spermatophytes(infile, outfile, countfile):
 					for key in aliens:
 						if key in line:
 							aliens[key] += 1
-				
-			rest = count - (spermcount + sum(aliens.values()))  
+
+			rest = count - (spermcount + sum(aliens.values()))
 
 
 	with open(countfile, 'a') as out:
 		out.write('{T};{S};{Embryophyta};{Fungi};{Rodentia};{Bacteria};{Hominidae};\
 			{Amphibia};{Mollusca};{Insecta};{R}\n'.format(T=taxon, S=spermcount, **aliens, R=rest))
-		
+
 def revc(seq):
-## helper function: produce reverse compliment 
+## helper function: produce reverse compliment
 ## of a DNA sequence
 
 	baseComplement = { 'A' : 'T', 'C' : 'G', 'G' : 'C', 'T' : 'A' }
 	return "".join([baseComplement[base] for base in seq[::-1]])
 
 def get_query_coords(blast_hit_entire):
-## helper function: get the position of the query hit 
-##correcting for direction from the blastp output 
+## helper function: get the position of the query hit
+##correcting for direction from the blastp output
 
 	coords = blast_hit_entire.split('^')[2].split(',')[0][2:]
 	if int(coords.split('-')[0]) > int(coords.split('-')[1]):
@@ -86,12 +86,12 @@ def cut2ORF(prot_coords, sequence):
 	   rev_comb = revc(short_seq)
 	   return rev_comb
 
-		
+
 def count_abundance(directory):
 ## Count abundance of gene symbols in all samples
-## Idea: create dictionary with gene symbols as key and nested dictionaries as 
+## Idea: create dictionary with gene symbols as key and nested dictionaries as
 ## values, containing sample name as key and number of occurrences as value
-## adding to the dict if I find the gene symbol in the second column of the 
+## adding to the dict if I find the gene symbol in the second column of the
 ## *.spermatophytes* file
 
 
@@ -127,7 +127,7 @@ def minimum_depth(abundance_dict, cutoff):
 def exclude_putative_repetitives(reduced_dict, full_dict, cutoff):
 ## some gene symbols show very high species counts - filter these out as they likely represent repetitive stuff
 ## cutoff = user-specified
-## first step: get list of gene symbols this pertains to 
+## first step: get list of gene symbols this pertains to
 ## steps:
 ## 1 lopp through redab dictionary
 ## 2 for each symbol (key) in dict - loop through sub-dictionary contained in value
@@ -148,10 +148,10 @@ def exclude_putative_repetitives(reduced_dict, full_dict, cutoff):
 	for symbol in put_repet:
 		del reduced_dict[symbol]
 	print('removed %s genes as putatively repetitive' % len(put_repet))
-	return reduced_dict		
-		
-		
-		
+	return reduced_dict
+
+
+
 def main():
 
 ###########################
@@ -161,22 +161,24 @@ def main():
 		" Filters Trinotate annotation report according to "
 		" BlastP results in two steps: 1) keep only transcripts with blast hits, "
 		" then 2) remove transcripts mapping to non-spermatophyte references."
-		" It will create a file 'aliens' listing the transcripts filtered in step 2." 
+		" It will create a file 'aliens' listing the transcripts filtered in step 2."
 		" Please make sure to include the transcripts in the Trinotate report.")
 	parser.add_argument('PATH', type=str, help='path to directory containing Trinotate results')
 	parser.add_argument('-n', '--Num_Samples_cutoff', type=int, required=True,
 		help='<number> genes are reported when found in more that this number of samples')
-	parser.add_argument('-r', '--repetitive_cutoff', type=int, 
+	parser.add_argument('-r', '--repetitive_cutoff', type=int,
 		help='<number> if a gene is found in any one species more than this number of times '
-		'it is regarded as a putatively repetitive region and excluded. Default: 0 '  
+		'it is regarded as a putatively repetitive region and excluded. Default: 0 '
 		'(no exclusion)', default=0 )
 	parser.add_argument('-b', '--blast_algorithm', type=str, help='<P or X> choose which BLAST results '
-		'will be the basis for filtering. Default (blast)P', 
+		'will be the basis for filtering. Default (blast)P',
 		choices=('P', 'X'), default='P', const='P', nargs='?')
-	
+	parser.add_argument('-d', '--New_Directory', type=str,
+		help='<string> name for the new directory containing the output *fasta files. '
+		'Default: NewFastas' , default='NewFastas' )
 	args = parser.parse_args()
-	
-	
+
+
 ###########################
 	# create countfile
 	countfile = os.path.join(args.PATH, "aliens.csv")
@@ -184,8 +186,8 @@ def main():
 		out.write(';{};{};{};{};{};{};{};{};{};{}\n'.format('Spermatophyta',
 				'Embryophyta', 'Fungi', 'Rodentia', 'Bacteria', 'Hominidae',
 				'Amphibia', 'Mollusca', 'Insecta', 'Other'))
-	
-	
+
+
 	# remove any line without blastp hit
 	for f in glob.glob(os.path.join(args.PATH, '*.xls')):
 		taxon = os.path.basename(f).split('_')[0]
@@ -198,28 +200,28 @@ def main():
 			export = sample_red[sample_red['sprot_Top_BLASTX_hit'] != "."]
 		filtered_csv = (os.path.join(os.path.dirname(f), taxon + ".filtered.csv"))
 		# helper: name of first output file containing only entries with blastp hits
-		
+
 		export.to_csv(filtered_csv, sep='|', index=False)
-		
+
 		# filter out any non-spermatophyty blast hit
 		spermatophyte = os.path.join(os.path.dirname(f), taxon + '.spermatophytes.csv')
 		filter_spermatophytes(filtered_csv, spermatophyte, countfile)
-	
-	
+
+
 	full_dict = count_abundance(args.PATH)
-	
-	# now sort the dictionary by the length of the values (=nested dictionaries), 
+
+	# now sort the dictionary by the length of the values (=nested dictionaries),
 	#brauch ich das? wirklich?
 	#sorted_list = sorted(full_dict, key=lambda k: len(full_dict[k]), reverse=True)
 
-	# as preparation for possible sorting (i.e. excluding) of loci due to high 
+	# as preparation for possible sorting (i.e. excluding) of loci due to high
 	# hit count of genes per sample
 	reduced = minimum_depth(full_dict, args.Num_Samples_cutoff)
 
 	final = exclude_putative_repetitives(reduced, full_dict, args.repetitive_cutoff)
-	
+
 	# create new directory to put the resulting Fasta files in
-	fastadir = os.path.join(args.PATH, "NewFastas")
+	fastadir = os.path.join(args.PATH, args.New_Directory)
 	if not os.path.isdir(fastadir):
 		os.mkdir(fastadir)
 
@@ -240,9 +242,9 @@ def main():
 						fastafile = os.path.join(fastadir, (symbol + '.fasta'))
 						with open(fastafile, 'a') as f:
 							f.write('>{}\n{}\n'.format(header, orf.upper()))
-											
+
 	print('done')
 
-	
+
 if __name__ == '__main__':
 	main()

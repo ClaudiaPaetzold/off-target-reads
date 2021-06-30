@@ -168,10 +168,13 @@ optional arguments:
   -b [{P,X}], --blast_algorithm [{P,X}]
                         <P or X> choose which BLAST results will be the basis
                         for filtering. Default (blast)P
+  -d NEW_DIRECTORY, --New_Directory NEW_DIRECTORY
+                        <string> name for the new directory containing the output 
+						*fasta files. Default: NewFastas
 
 ```
 <br><br>
-**8) Multiple Seuqence Alignment**
+**8) Multiple Sequence Alignment**
 <br><br>
 Build multiple sequence alignments (MSAs) using the previously generated \*.fasta files as input. If possible choose attempt to align either direction of a given sequence (``` --adjustdirection``` in MAFFT). See this example:
 ```
