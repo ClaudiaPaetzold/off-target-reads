@@ -70,6 +70,7 @@ The Workflow consists of 10 individual steps, some of which are optional dependi
 Here is an example:
 <br><br>
         ```samtools view -h -f 4 {filename}.bam > {filename}.unmapped.sam```
+<br><br>
 Please include the header in the output or step 2 will fail with an error.
 <br><br>
 
