@@ -67,16 +67,18 @@ The Workflow consists of 10 individual steps, some of which are optional dependi
 
 **1) Samtools to extract unmapped sequences**
 <br><br>
-Here is an example for paired end reads:
+Here is an example:
 <br><br>
-        ```samtools view -f 4 {filename}.bam > {filename}.unmapped.sam```
+        ```samtools view -h -f 4 {filename}.bam > {filename}.unmapped.sam```
+Please include the header in the output or step 2 will fail with an error.
 <br><br>
+
 **2) Convert \*.sam file to \*.fastq file**
 <br><br>
 Here is the code for extracting the two paired end reads from the unmapped.sam file into individual \*.fastq files using the Picard suite.
 <br><br>
 ```
-        java -jar picard.jar SamToFastq I={filename}.unmapped.sam FASTQ={filename}_unmapped.1.fastq SECOND_END_FASTQ={filename}_unmapped.2.fastq
+        java -jar picard.jar SamToFastq -I {filename}.unmapped.sam -F {filename}_unmapped.1.fastq -F2 {filename}_unmapped.2.fastq
 ```
 <br><br>
 **3) De-novo assembly of off-target reads**
