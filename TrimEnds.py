@@ -50,7 +50,7 @@ def trim_alignment(aln, outname, fraction, gapchar):
     # delete any sequences that now have only gaps
     with open (outname, 'w') as out:
         for record in trimmed_aln:
-            if str(record.seq).count('-') == len(record.seq):
+            if str(record.seq).count('-') > (75 * len(record.seq) / 100):
                 to_remove.append(record.id)
             else:
                 out.write('>{}\n{}\n'.format(record.id, str(record.seq)))
