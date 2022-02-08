@@ -53,7 +53,7 @@ def trim_alignment(aln, outname, fraction, gapchar):
             if str(record.seq).count('-') == len(record.seq):
                 to_remove.append(record.id)
             else:
-                out.write('>{}\n{}'.format(record.id, str(record.seq)))
+                out.write('>{}\n{}\n'.format(record.id, str(record.seq)))
 
 	
 def main():
