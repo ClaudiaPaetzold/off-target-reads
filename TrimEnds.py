@@ -46,7 +46,14 @@ def trim_alignment(aln, outname, fraction, gapchar):
     pos = ends4trimming(aln, fraction, gapchar)
     trimmed_aln = aln[:, pos[0] + 1 : pos[1] -1]
     AlignIO.write(trimmed_aln, outname, 'fasta')
-
+    to_remove = []
+    # delete any sequences that now have only gaps
+    with open (outname, 'w') as out:
+        for record in trimmed_aln:
+            if str(record.seq).count('-') == len(record.seq):
+                to_remove.append(record.id)
+            else:
+                out.write('>{}\n{}'.format(record.id, str(record.seq)))
 
 	
 def main():
